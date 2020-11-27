@@ -1,0 +1,13 @@
+ aws ec2 create-security-group  --group-name lab3-sg --description "My security group for Lab3" --vpc-id vpc-6c3dca07
+ aws ec2 create-key-pair --key-name MyKeyLab3 --query 'KeyMaterial' --output text > MyKeyLab3.pem
+ aws ec2 authorize-security-group-ingress --group-id sg-0991d0f95fbda8a39 --protocol tcp --port 22 --cidr 0.0.0.0/0
+ aws ec2 authorize-security-group-ingress --group-id sg-0991d0f95fbda8a39 --protocol tcp --port 80 --cidr 0.0.0.0/0
+ aws ec2 authorize-security-group-ingress --group-id sg-0991d0f95fbda8a39 --protocol tcp --port 443 --cidr 0.0.0.0/0
+ aws ec2 modify-subnet-attribute --subnet-id subnet-00ffaa7a --map-public-ip-on-launch
+ touch ApacheScript.sh
+ vim ApacheScript.sh 
+ chmod 400 MyKeyLab3.pem
+ aws ec2 run-instances --image-id ami-09558250a3419e7d0 --count 1 --instance-type t2.micro --key-name MyKeyLab3 --security-group-ids sg-0991d0f95fbda8a39  --subnet-id subnet-00ffaa7a --user-data file://ApacheScript.sh
+ aws ec2 create-tags --resources i-0c1aaa769bcc4001a --tags Key=Role,Value=WebServer
+ aws ec2 create-image --instance-id  i-0c1aaa769bcc4001a --name "Lab3"
+ aws ec2 stop-instances --instance-ids i-0c1aaa769bcc4001a
